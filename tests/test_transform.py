@@ -1,4 +1,3 @@
-from pathlib import Path
 from sanctions_pipeline.transform import transform_csv_to_ftm
 import json
 

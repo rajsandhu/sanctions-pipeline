@@ -1,7 +1,6 @@
 from pathlib import Path
 import csv
 import json
-from followthemoney import model
 
 __all__ = ["transform_csv_to_ftm"]
 
