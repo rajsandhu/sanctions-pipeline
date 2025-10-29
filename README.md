@@ -77,6 +77,30 @@ make screen     # requires people.csv
 make lint       # ruff + black --check
 make test       # pytest
 ```
+Samples (no download needed)
+
+Use built-in tiny CSVs for a quick demo.
+
+```bash
+# Transform the sample sanctions CSV → JSONL
+uv run python -m sanctions_pipeline.cli transform \
+  --input data/sample/sdn_sample.csv \
+  --output data/ftm/entities.jsonl
+
+# Validate
+uv run python -m sanctions_pipeline.cli validate \
+  --input data/ftm/entities.jsonl \
+  --min-rows 1
+
+# Screen sample names against entities
+uv run python -m sanctions_pipeline.cli screen \
+  --input-csv data/sample/people_sample.csv \
+  --entities data/ftm/entities.jsonl \
+  --output-csv data/sample/matches_sample.csv
+
+# View results
+cat data/sample/matches_sample.csv
+```
 
 ## Data
 
