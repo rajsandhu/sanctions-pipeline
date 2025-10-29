@@ -8,3 +8,6 @@ __pycache__/
 *.pyc
 data/
 !data/sample/**matches.csv
+.DS_Store
+__pycache__/
+*.pyc

@@ -30,5 +30,24 @@ def transform(
     typer.echo(f"Wrote {n} entities to {output}")
 
 
+@app.command()
+def screen(
+    input_csv: str = typer.Option(
+        ..., "--input-csv", help="CSV file with names to screen"
+    ),
+    entities: str = typer.Option(
+        "data/ftm/entities.jsonl", "--entities", help="JSONL entities file"
+    ),
+    output_csv: str = typer.Option(
+        "data/screen/results.csv", "--output-csv", help="Output CSV with matches"
+    ),
+):
+    """Match names in a CSV against entities; write matches to CSV."""
+    from .screen import screen_names
+
+    n = screen_names(input_csv, entities, output_csv)
+    typer.echo(f"Matched {n} rows -> {output_csv}")
+
+
 if __name__ == "__main__":
     app()
