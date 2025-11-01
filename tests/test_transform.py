@@ -1,4 +1,4 @@
-from sanctions_pipeline.transform import transform_csv_to_ftm
+from sanctions_pipeline.transform import transform_to_simple_jsonl
 import json
 
 
@@ -8,7 +8,7 @@ def test_transform_creates_entities(tmp_path):
         "sdnType,name,program,remarks\nIndividual,Jane Doe,SDGT,Test remark\n"
     )
     out = tmp_path / "entities.jsonl"
-    n = transform_csv_to_ftm(str(raw), str(out))
+    n = transform_to_simple_jsonl(str(raw), str(out))
     assert n == 1
     lines = out.read_text().strip().splitlines()
     assert len(lines) == 1
