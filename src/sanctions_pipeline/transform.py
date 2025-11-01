@@ -25,6 +25,7 @@ except Exception:
     def make_id(*parts):
         return "id-" + "-".join(str(p) for p in parts if p is not None)
 
+
 try:
     import pandas as pd  # for .xlsx support
 except ImportError:
@@ -32,13 +33,14 @@ except ImportError:
 
 __all__ = ["transform_to_simple_jsonl", "transform_csv_to_ftm"]
 
+
 def _iter_rows_from_csv(path: Path) -> Iterable[Dict[str, Any]]:
     """
     Iterate over rows in a CSV file, yielding each row as a dictionary.
-    
+
     Args:
         path: Path to the CSV file
-        
+
     Yields:
         Dict[str, Any]: Dictionary representing each row in the CSV file
     """
@@ -47,35 +49,39 @@ def _iter_rows_from_csv(path: Path) -> Iterable[Dict[str, Any]]:
         for row in reader:
             yield row
 
+
 def _iter_rows_from_excel(path: Path) -> Iterable[Dict[str, Any]]:
     """
     Iterate over rows in an Excel file, yielding each row as a dictionary.
-    
+
     Args:
         path: Path to the Excel file
-        
+
     Yields:
         Dict[str, Any]: Dictionary representing each row in the Excel file
-        
+
     Raises:
         RuntimeError: If pandas is not installed
     """
     if pd is None:
-        raise RuntimeError("pandas/openpyxl required for Excel. Run: uv add pandas openpyxl")
+        raise RuntimeError(
+            "pandas/openpyxl required for Excel. Run: uv add pandas openpyxl"
+        )
     df = pd.read_excel(path, dtype=str).fillna("")
     for _, row in df.iterrows():
         yield {k: str(v) for k, v in row.items()}
 
+
 def _row_iter(input_path: str) -> Iterable[Dict[str, Any]]:
     """
     Determine the appropriate iterator based on file extension.
-    
+
     Args:
         input_path: Path to the input file
-        
+
     Returns:
         Iterable[Dict[str, Any]]: Iterator over the file rows
-        
+
     Raises:
         ValueError: If the file extension is not supported
     """
@@ -85,20 +91,23 @@ def _row_iter(input_path: str) -> Iterable[Dict[str, Any]]:
         return _iter_rows_from_excel(inp)
     return _iter_rows_from_csv(inp)
 
+
 def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
     """
     Normalize a row of data by cleaning and standardizing field names.
-    
+
     Args:
         row: Dictionary containing raw data
-        
+
     Returns:
         Dict[str, str]: Normalized dictionary with cleaned values
     """
     # Clean and standardize keys
-    r = {str(k).strip().lower(): (str(v).strip() if v is not None else "") 
-         for k, v in row.items()}
-    
+    r = {
+        str(k).strip().lower(): (str(v).strip() if v is not None else "")
+        for k, v in row.items()
+    }
+
     # Extract required fields with fallbacks
     name = (
         r.get("name")
@@ -108,10 +117,28 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
         or r.get("individual_name")
         or ""
     )
-    sdn_type = r.get("sdntype") or r.get("type") or r.get("entity_type") or r.get("individual") or ""
-    program = r.get("program") or r.get("regime") or r.get("listing_program") or r.get("sanctions_regime") or ""
-    remarks = r.get("remarks") or r.get("comments") or r.get("reason") or r.get("additional_information") or ""
-    
+    sdn_type = (
+        r.get("sdntype")
+        or r.get("type")
+        or r.get("entity_type")
+        or r.get("individual")
+        or ""
+    )
+    program = (
+        r.get("program")
+        or r.get("regime")
+        or r.get("listing_program")
+        or r.get("sanctions_regime")
+        or ""
+    )
+    remarks = (
+        r.get("remarks")
+        or r.get("comments")
+        or r.get("reason")
+        or r.get("additional_information")
+        or ""
+    )
+
     return {
         "name": name,
         "sdn_type": sdn_type,
@@ -119,24 +146,25 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
         "remarks": remarks,
     }
 
+
 def transform_to_simple_jsonl(input_path: str, output_path: str) -> int:
     """
     Transform input CSV/Excel file to simple JSONL format.
-    
+
     Args:
         input_path: Path to input CSV/Excel file
         output_path: Path where output JSONL file will be written
-        
+
     Returns:
         int: Number of entities written
-        
+
     Raises:
         Exception: If any error occurs during transformation
     """
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     count = 0
-    
+
     try:
         with out.open("w", encoding="utf-8") as jsonl:
             for idx, row in enumerate(_row_iter(input_path)):
@@ -144,17 +172,21 @@ def transform_to_simple_jsonl(input_path: str, output_path: str) -> int:
                 name = r["name"]
                 if not name:
                     continue
-                
+
                 # Determine schema type
-                schema = "Person" if "individual" in (r["sdn_type"] or "").lower() else "Organization"
-                
+                schema = (
+                    "Person"
+                    if "individual" in (r["sdn_type"] or "").lower()
+                    else "Organization"
+                )
+
                 # Create entity
                 entity = {
                     "schema": schema,
                     "id": f"row-{idx}",
                     "name": name,
                 }
-                
+
                 # Add notes if available
                 notes = []
                 if r["program"]:
@@ -163,33 +195,34 @@ def transform_to_simple_jsonl(input_path: str, output_path: str) -> int:
                     notes.append(r["remarks"])
                 if notes:
                     entity["notes"] = "; ".join(notes)
-                
+
                 # Write to JSONL
                 jsonl.write(json.dumps(entity) + "\n")
                 count += 1
         return count
-    
+
     except Exception as e:
         raise Exception(f"Error during transformation: {str(e)}")
+
 
 def transform_csv_to_ftm(input_path: str, output_path: str) -> int:
     """
     Transform input CSV/Excel file to FollowTheMoney JSONL format.
-    
+
     Args:
         input_path: Path to input CSV/Excel file
         output_path: Path where output JSONL file will be written
-        
+
     Returns:
         int: Number of entities written
-        
+
     Raises:
         Exception: If any error occurs during transformation
     """
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     count = 0
-    
+
     try:
         with out.open("w", encoding="utf-8") as jsonl:
             for idx, row in enumerate(_row_iter(input_path)):
@@ -197,10 +230,14 @@ def transform_csv_to_ftm(input_path: str, output_path: str) -> int:
                 name = r["name"]
                 if not name:
                     continue
-                
+
                 # Determine schema type
-                schema = "Person" if "individual" in (r["sdn_type"] or "").lower() else "Organization"
-                
+                schema = (
+                    "Person"
+                    if "individual" in (r["sdn_type"] or "").lower()
+                    else "Organization"
+                )
+
                 # Create FTM entity
                 # Create entity using appropriate method
                 try:
@@ -209,6 +246,7 @@ def transform_csv_to_ftm(input_path: str, output_path: str) -> int:
                 except Exception:
                     # Fallback to EntityProxy for older FTM versions
                     from followthemoney.proxy import EntityProxy
+
                     ent = EntityProxy(model.get(schema))
 
                 # Set a deterministic id (same input -> same id)
@@ -235,11 +273,12 @@ def transform_csv_to_ftm(input_path: str, output_path: str) -> int:
                 else:
                     # Fallback to basic JSON representation
                     import json as _json
+
                     jsonl.write(_json.dumps(ent.to_dict()) + "\n")
 
                 # Increment counter
                 count += 1
         return count
-    
+
     except Exception as e:
         raise Exception(f"Error during transformation: {str(e)}")
