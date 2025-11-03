@@ -115,6 +115,7 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
         or r.get("entity_name")
         or r.get("full_name")
         or r.get("individual_name")
+        or r.get("name of individual or entity")        
         or ""
     )
     sdn_type = (
@@ -129,6 +130,7 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
         or r.get("regime")
         or r.get("listing_program")
         or r.get("sanctions_regime")
+        or r.get("committees")
         or ""
     )
     remarks = (
@@ -136,6 +138,7 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
         or r.get("comments")
         or r.get("reason")
         or r.get("additional_information")
+        or r.get("listing information")          
         or ""
     )
 
