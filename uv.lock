@@ -1454,6 +1454,7 @@ dependencies = [
     { name = "nomenklatura" },
     { name = "pandas" },
     { name = "pytest" },
+    { name = "requests" },
     { name = "ruff" },
     { name = "typer" },
 ]
@@ -1466,6 +1467,7 @@ requires-dist = [
     { name = "nomenklatura", specifier = ">=4.1.9" },
     { name = "pandas", specifier = ">=2.3.3" },
     { name = "pytest", specifier = ">=8.4.2" },
+    { name = "requests", specifier = ">=2.32.5" },
     { name = "ruff", specifier = ">=0.14.2" },
     { name = "typer", specifier = ">=0.20.0" },
 ]
