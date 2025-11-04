@@ -28,3 +28,8 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/sanctions_pipeline"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.3.0",
+]
