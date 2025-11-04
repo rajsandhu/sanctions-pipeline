@@ -67,10 +67,12 @@ def screen(
     n = screen_names(input_csv, entities, output_csv)
     typer.echo(f"Matched {n} rows -> {output_csv}")
 
+
 @app.command()
 def validate(input: str = "data/ftm/entities.jsonl", min_rows: int = 1):
     """Validate a JSONL file: parses JSON and enforces min row count."""
     from .validate import validate_jsonl
+
     summary = validate_jsonl(input, min_rows=min_rows)
     typer.echo(f"Valid: {summary['total']} records")
 
