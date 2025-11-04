@@ -149,13 +149,12 @@ note: don't forget the periods in there
 
 ## AI-assisted development
 
-- Current use: I’ve used browser-based AI assistants (e.g., ChatGPT, Claude web, Llama, Phind) to draft code and unblock issues outside my editor.
+- Current use: I’ve started using GitHub Copilot for drafting code and unblocking issues directly in my editor.
 - Plan (in-editor tools):
-    - GitHub Copilot (primary): enable inline suggestions and Copilot Chat in VS Code (first month free). Use it for test scaffolding, small refactors, and CI/YAML boilerplate.
-    - Claude Code (secondary): try the VS Code extension for multi-file edits and careful refactors (optional; may require Claude Pro or an API key).
+    - **GitHub Copilot (primary)**: enable inline suggestions and Copilot Chat in VS Code (first month free). Use it for test scaffolding, small refactors, and CI/YAML boilerplate.
 - Quality control: All AI-assisted changes are validated by tests (pytest), linting/formatting (Ruff/Black), and CI (GitHub Actions). I keep diffs small and readable.
 - Transparency: I document commands in the README and note AI-assisted changes in PRs when applicable.
-- Learning goals: get comfortable with Copilot inline suggestions and Copilot Chat; try Claude Code for a small, multi-file refactor.
+- Learning goals: get comfortable with Copilot inline suggestions and Copilot Chat; explore its capabilities for enhancing productivity and code quality.
 
 
 ## License
