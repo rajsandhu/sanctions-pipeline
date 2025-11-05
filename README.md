@@ -163,4 +163,4 @@ MIT
 
 ## Notes
 
-Developed with AI coding assistance (e.g., ChatGPT 5, Claude Sora, Llama, etc, but notably no in-editor LLMs like Claude Code, Github CoPilot ); validated by tests and CI.
+Developed with AI coding assistance (initially with a messy mix of ChatGPT 5, Phind, Claude Sora, Llama, etc, then finally with GitHub Copilot); validated by tests and CI.
