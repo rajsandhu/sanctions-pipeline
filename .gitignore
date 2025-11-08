@@ -14,3 +14,7 @@ __pycache__/
 data/raw/
 data/ftm/
 !.gitkeep
+# Data directories (generated files)
+data/raw/
+data/ftm/
+!data/*/.gitkeep
