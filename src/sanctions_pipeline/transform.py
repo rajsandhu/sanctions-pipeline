@@ -93,22 +93,12 @@ def _row_iter(input_path: str) -> Iterable[Dict[str, Any]]:
 
 
 def _normalize_row(row: Dict[str, Any]) -> Dict[str, str]:
-    """
-    Normalize a row of data by cleaning and standardizing field names.
-
-    Args:
-        row: Dictionary containing raw data
-
-    Returns:
-        Dict[str, str]: Normalized dictionary with cleaned values
-    """
-    # Clean and standardize keys
+    """Normalize a row of data by cleaning and standardizing field names."""
     r = {
         str(k).strip().lower(): (str(v).strip() if v is not None else "")
         for k, v in row.items()
     }
 
-    # Extract required fields with fallbacks
     name = (
         r.get("name")
         or r.get("listed_name")
