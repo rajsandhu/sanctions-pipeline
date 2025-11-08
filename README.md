@@ -198,6 +198,19 @@ note: don't forget the periods in there
 - Add a Dockerfile for easier running (optional)
 - Learn and use AI coding assistants in VS Code (GitHub Copilot, Claude Code) to refine this repo and future projects
 
+## Next Improvements
+
+- YAML-driven source configs (Zavod-style) instead of hard-coded Python
+- Retry/backoff + caching layer for downloads
+- Incremental runs (only re-transform changed sources)
+- FollowTheMoney enrichment: add identifiers, dates, jurisdictions
+- Fuzzy & phonetic matching (Levenshtein, Double Metaphone) for screening
+- Duplicate detection across multiple sources
+- Basic provenance fields (retrieved_at, source_url) in output
+- GitHub Actions job matrix for multiple Python versions
+- Container image (Dockerfile + slim runtime) for reproducible deploy
+- Security lint (bandit) and dependency audit (pip-audit)
+
 ## AI-assisted development
 
 - Current use: I’ve started using GitHub Copilot for drafting code and unblocking issues directly in my editor.
