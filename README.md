@@ -102,6 +102,57 @@ uv run python -m sanctions_pipeline.cli screen \
 cat data/sample/matches_sample.csv
 ```
 
+## DFAT Pipeline (End-to-End Example)
+
+This shows the complete workflow for Australian DFAT sanctions data—exactly what I built for this project.
+
+### Column Mapping
+
+The DFAT XLSX file uses these column names:
+- `Name of Individual or Entity` → normalized to `name`
+- `Committees` → included in `notes`
+- `Listing Information` → included in `notes`
+
+### Commands
+
+```bash
+# 1. Crawl: Download the DFAT XLSX file (10,118 rows as of Nov 2024)
+uv run python scripts/crawl_dfat.py -v
+
+# 2. Transform: Convert XLSX → simple JSONL format (jsonl is the default)
+uv run python -m sanctions_pipeline.cli transform \
+  --input data/raw/dfat_consolidated.xlsx \
+  --output data/ftm/dfat_entities.jsonl \
+  -v
+
+# 3. Validate: Ensure at least 10,000 records
+uv run python -m sanctions_pipeline.cli validate \
+  --input data/ftm/dfat_entities.jsonl \
+  --min-rows 10000 \
+  -v
+
+# 4. Optional: Transform to FollowTheMoney (FTM) format instead
+uv run python -m sanctions_pipeline.cli transform \
+  --input data/raw/dfat_consolidated.xlsx \
+  --output data/ftm/dfat_ftm.jsonl \
+  --format ftm \
+  -v
+```
+
+### Expected Output
+
+After running these commands, you'll have:
+- `data/raw/dfat_consolidated.xlsx` (906 KB, downloaded from DFAT)
+- `data/ftm/dfat_entities.jsonl` (10,118 entities in simple format)
+- Validation confirms: ✅ all rows are valid JSON
+
+### What This Demonstrates
+
+- **Real-world data ingestion**: Downloads a live government dataset
+- **Column normalization**: Handles DFAT-specific headers
+- **Data quality checks**: Validates JSON structure and row counts
+- **Dual output formats**: Simple JSONL for screening, FTM for advanced use
+
 ## Data
 
 - Source: Australia DFAT consolidated list (public): https://www.dfat.gov.au/
