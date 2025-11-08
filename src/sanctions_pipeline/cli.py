@@ -1,6 +1,7 @@
 import pathlib
 import typer
 import httpx
+import logging
 
 app = typer.Typer(help="Sanctions pipeline CLI")
 
@@ -8,6 +9,7 @@ app = typer.Typer(help="Sanctions pipeline CLI")
 @app.command()
 def extract(url: str, out: str = "data/raw/source.json") -> None:
     """Download a URL to a local file."""
+    logging.info(f"Downloading: {url}")
     p = pathlib.Path(out)
     p.parent.mkdir(parents=True, exist_ok=True)
 
@@ -16,6 +18,7 @@ def extract(url: str, out: str = "data/raw/source.json") -> None:
         r.raise_for_status()
         p.write_bytes(r.content)
 
+    logging.info(f"Saved: {out}")
     typer.echo(f"Saved {out}")
 
 
@@ -75,6 +78,14 @@ def validate(input: str = "data/ftm/entities.jsonl", min_rows: int = 1):
 
     summary = validate_jsonl(input, min_rows=min_rows)
     typer.echo(f"Valid: {summary['total']} records")
+
+
+@app.callback()
+def main(
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging")
+):
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
 
 if __name__ == "__main__":
